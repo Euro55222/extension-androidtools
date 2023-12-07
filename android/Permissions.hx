@@ -231,9 +231,51 @@ class Permissions
 	 */
 	public static function requestPermission(permission:String, requestCode:Int = 1):Void
 	{
-		requestPermission_jni(permission, requestCode);
-	}
+		init();
 
+		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
+		requestPermissionsJNI([permission], requestCode);
+	}
+	
+	/**
+	 * Displays a dialog requesting all of the given permissions at once.
+	 * This dialog will be displayed even if the user already granted the permissions, allowing them to disable them if they like.
+	 */
+	public static function requestPermissions(permissions:Array<String>, requestCode:Int = 1):Void
+	{
+		init();
+
+		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
+		requestPermissionsJNI(permissions, requestCode);
+	}
 	private static var getGrantedPermissions_jni:Dynamic = JNI.createStaticMethod('org/haxe/extension/Tools', 'getGrantedPermissions', '()[Ljava/lang/String;');
 	private static var requestPermission_jni:Dynamic = JNI.createStaticMethod('org/haxe/lime/GameActivity', 'requestPermission', '(Ljava/lang/String;I)V');
+}
+
+class CallBack
+{
+	public function new() {}
+
+	public function onRequestPermissionsResult(requestCode:Int, permissions:Array<String>, grantResults:Array<Int>):Void
+	{
+		var granted:Array<String> = [];
+		var denied:Array<String> = [];
+
+		for(i => permission in permissions)
+		{
+			if(Permissions.getGrantedPermissions().contains(permission))
+				granted.push(permission);
+			else
+				denied.push(permission);
+		}
+
+		if(granted.length > 0)
+			Permissions.onPermissionsGranted.dispatch(granted);
+
+		if(denied.length > 0)
+			Permissions.onPermissionsDenied.dispatch(denied);
+
+		if (Permissions.onRequestPermissionsResult != null)
+			Permissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
 }
