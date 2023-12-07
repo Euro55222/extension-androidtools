@@ -218,6 +218,7 @@ class Permissions
 	 * Checks whether the app already has the given permission.
 	 * Returns the granted permissions.
 	 */
+	static var initialized:Bool = false;
 	private static function init()
 	{
 		if(!initialized)
