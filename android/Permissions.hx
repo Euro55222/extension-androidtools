@@ -251,31 +251,3 @@ class Permissions
 	private static var getGrantedPermissions_jni:Dynamic = JNI.createStaticMethod('org/haxe/extension/Tools', 'getGrantedPermissions', '()[Ljava/lang/String;');
 	private static var requestPermission_jni:Dynamic = JNI.createStaticMethod('org/haxe/lime/GameActivity', 'requestPermission', '(Ljava/lang/String;I)V');
 }
-
-class CallBack
-{
-	public function new() {}
-
-	public function onRequestPermissionsResult(requestCode:Int, permissions:Array<String>, grantResults:Array<Int>):Void
-	{
-		var granted:Array<String> = [];
-		var denied:Array<String> = [];
-
-		for(i => permission in permissions)
-		{
-			if(Permissions.getGrantedPermissions().contains(permission))
-				granted.push(permission);
-			else
-				denied.push(permission);
-		}
-
-		if(granted.length > 0)
-			Permissions.onPermissionsGranted.dispatch(granted);
-
-		if(denied.length > 0)
-			Permissions.onPermissionsDenied.dispatch(denied);
-
-		if (Permissions.onRequestPermissionsResult != null)
-			Permissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
-	}
-}
