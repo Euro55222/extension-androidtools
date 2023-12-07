@@ -241,13 +241,7 @@ class Permissions
 	 * Displays a dialog requesting all of the given permissions at once.
 	 * This dialog will be displayed even if the user already granted the permissions, allowing them to disable them if they like.
 	 */
-	public static function requestPermissions(permissions:Array<String>, requestCode:Int = 1):Void
-	{
-		init();
 
-		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
-		requestPermissionsJNI(permissions, requestCode);
-	}
 	private static var getGrantedPermissions_jni:Dynamic = JNI.createStaticMethod('org/haxe/extension/Tools', 'getGrantedPermissions', '()[Ljava/lang/String;');
 	private static var requestPermission_jni:Dynamic = JNI.createStaticMethod('org/haxe/lime/GameActivity', 'requestPermission', '(Ljava/lang/String;I)V');
 }
