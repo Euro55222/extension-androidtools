@@ -218,6 +218,16 @@ class Permissions
 	 * Checks whether the app already has the given permission.
 	 * Returns the granted permissions.
 	 */
+	private static function init()
+	{
+		if(!initialized)
+		{
+			var callBackJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "init", "(Lorg/haxe/lime/HaxeObject;)V");
+			callBackJNI(new CallBack());
+			initialized = true;
+		}
+	}
+	
 	public static function getGrantedPermissions():Array<String>
 	{
 		return getGrantedPermissions_jni();
@@ -235,6 +245,18 @@ class Permissions
 
 		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
 		requestPermissionsJNI([permission], requestCode);
+	}
+	
+	/**
+	 * Displays a dialog requesting all of the given permissions at once.
+	 * This dialog will be displayed even if the user already granted the permissions, allowing them to disable them if they like.
+	 */
+	public static function requestPermissions(permissions:Array<String>, requestCode:Int = 1):Void
+	{
+		init();
+
+		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
+		requestPermissionsJNI(permissions, requestCode);
 	}
 	
 	/**
