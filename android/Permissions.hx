@@ -3,7 +3,6 @@ package android;
 #if (!android && !native && macro)
 #error 'extension-androidtools is not supported on your current platform'
 #end
-import android.callback.CallBackEvent;
 import lime.app.Event;
 import lime.system.JNI;
 
@@ -220,16 +219,6 @@ class Permissions
 	 * Checks whether the app already has the given permission.
 	 * Returns the granted permissions.
 	 */
-	static var initialized:Bool = false;
-	private static function init()
-	{
-		if(!initialized)
-		{
-			var callBackJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "init", "(Lorg/haxe/lime/HaxeObject;)V");
-			callBackJNI(new CallBack());
-			initialized = true;
-		}
-	}
 	
 	public static function getGrantedPermissions():Array<String>
 	{
@@ -244,22 +233,11 @@ class Permissions
 	 */
 	public static function requestPermission(permission:String, requestCode:Int = 1):Void
 	{
-		init();
-
-		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
-		requestPermissionsJNI([permission], requestCode);
+		requestPermission_jni(permission, requestCode);
 	}
-	
-	/**
-	 * Displays a dialog requesting all of the given permissions at once.
-	 * This dialog will be displayed even if the user already granted the permissions, allowing them to disable them if they like.
-	 */
 	public static function requestPermissions(permissions:Array<String>, requestCode:Int = 1):Void
 	{
-		init();
-
-		var requestPermissionsJNI = JNI.createStaticMethod("org/haxe/extension/Permissions", "requestPermissions", "([Ljava/lang/String;I)V");
-		requestPermissionsJNI(permissions, requestCode);
+		requestPermission_jni(permission, requestCode);
 	}
 	
 	/**
